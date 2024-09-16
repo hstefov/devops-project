@@ -1,4 +1,4 @@
-name: Notify on Commit
+name: Notify and Build Docker on Commit
 
 on:
   push:
@@ -17,3 +17,25 @@ jobs:
           --form-string "user=ug9baaoiacgcx4cgqx6773nx1o6awp" \
           --form-string "message=New commit by ${{ github.actor }}. Commit message: ${{ github.event.head_commit.message }}" \
           https://api.pushover.net/1/messages.json
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: notify
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: hstefov/devops-project-app:latest
