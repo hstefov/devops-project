@@ -2,9 +2,7 @@ version: '3.8'
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: hstefov/devops-project-app:latest
     container_name: employee-app
     ports:
       - "8080:8080"
