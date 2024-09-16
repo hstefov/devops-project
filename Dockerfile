@@ -1,30 +1,17 @@
-# Stage 1: Build
-FROM openjdk:17-oracle AS build
+FROM openjdk:17 as build
+WORKDIR /workspace/app
 
-# Set the working directory
-WORKDIR /app
-
-# Copy the Maven wrapper and pom.xml
-COPY pom.xml mvnw ./
+COPY mvnw .
 COPY .mvn .mvn
-
-# Resolve dependencies
-RUN ./mvnw dependency:resolve
-
-# Copy the source code
+COPY pom.xml .
 COPY src src
 
-# Package the application
-RUN ./mvnw package
+RUN chmod +x mvnw
+RUN ./mvnw install -DskipTests
+RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
-# Stage 2: Run
-FROM openjdk:17-oracle
-
-# Set the working directory
-WORKDIR /app
-
-# Copy the JAR file from the build stage
-COPY --from=build /app/target/*.jar app.jar
-
-# Define the entrypoint
-ENTRYPOINT ["java", "-jar", "app.jar"]
+FROM openjdk:17
+ARG JAR_FILE=/workspace/app/target/*.jar
+COPY --from=build ${JAR_FILE} app.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","/app.jar"]
