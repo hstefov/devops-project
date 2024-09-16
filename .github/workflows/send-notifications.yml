@@ -1,0 +1,19 @@
+name: Notify on Commit
+
+on:
+  push:
+    branches:
+      - "main" # or any branches you want to monitor
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Send Push Notification via Pushover
+        run: |
+          curl -s \
+          --form-string "token=az4r2jtfbk3tb9oepic9hz8y5dqvdi" \
+          --form-string "user=ug9baaoiacgcx4cgqx6773nx1o6awp" \
+          --form-string "message=New commit by ${{ github.actor }}. Commit message: ${{ github.event.head_commit.message }}" \
+          https://api.pushover.net/1/messages.json
