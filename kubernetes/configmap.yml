@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:  
+  name: app-config  
+  namespace: employee-app
+data:  
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://db-service:5432/employee-db"

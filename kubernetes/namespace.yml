@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:  
+  name: employee-app
+  labels:
+    name: employee-app
+  annotations:
+    description: "Namespace for the Employee App project"
